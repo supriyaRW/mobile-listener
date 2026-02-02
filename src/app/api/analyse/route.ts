@@ -1,3 +1,4 @@
-export { POST, runtime } from "../analyze/route";
+export const runtime = "nodejs";
+export { POST } from "../analyze/route";
 
 

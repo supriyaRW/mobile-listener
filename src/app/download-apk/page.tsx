@@ -49,7 +49,7 @@ export default function DownloadAPKPage() {
             The APK file should start downloading automatically.
           </p>
           <p className="text-sm text-gray-500">
-            If download doesn't start, check your browser's download settings or try the link below.
+            If download doesn&apos;t start, check your browser&apos;s download settings or try the link below.
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
@@ -27,8 +27,18 @@ export async function GET() {
     // Read the APK file
     const apkBuffer = await readFile(apkPath);
     
-    // Return the APK file with proper headers for mobile download
-    return new NextResponse(apkBuffer, {
+    // Convert Buffer to a proper ArrayBuffer by creating a new one
+    // This avoids SharedArrayBuffer type issues
+    const arrayBuffer = apkBuffer.buffer.slice(
+      apkBuffer.byteOffset,
+      apkBuffer.byteOffset + apkBuffer.byteLength
+    ) as ArrayBuffer;
+    
+    // Create Blob from ArrayBuffer
+    const blob = new Blob([arrayBuffer], { type: "application/vnd.android.package-archive" });
+    
+    // Create Response with proper headers for mobile download
+    return new Response(blob, {
       headers: {
         "Content-Type": "application/vnd.android.package-archive",
         "Content-Disposition": `attachment; filename="${apkFileName}"`,

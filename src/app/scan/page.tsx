@@ -6,9 +6,12 @@ import { config } from "@/lib/config";
 
 function ScanRedirectContent() {
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get("returnUrl") || "";
-
+  
   useEffect(() => {
+    // Get return URL from params or use current origin
+    const returnUrlParam = searchParams.get("returnUrl");
+    const finalReturnUrl = returnUrlParam || (typeof window !== 'undefined' ? window.location.origin : '');
+    
     // Detect platform
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
@@ -17,13 +20,14 @@ function ScanRedirectContent() {
     const instructions = document.getElementById("instructions");
     
     if (isAndroid) {
-      // For Android: First try to open the app, then download APK if app not installed
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-      const httpUrl = `${baseUrl}/scan${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`;
-      const deepLink = `expiryanalyzer://scan?returnUrl=${encodeURIComponent(returnUrl)}`;
-      const intentLink = `intent://scan?returnUrl=${encodeURIComponent(returnUrl)}#Intent;scheme=expiryanalyzer;package=com.example.exp_date;end`;
+      // For Android: Immediately try to open app using deep link scheme
+      const deepLink = `expiryanalyzer://scan?returnUrl=${encodeURIComponent(finalReturnUrl)}`;
+      const intentLink = `intent://scan?returnUrl=${encodeURIComponent(finalReturnUrl)}#Intent;scheme=expiryanalyzer;package=com.example.exp_date;end`;
       
-      console.log('🔗 QR Scan - Attempting to open app via HTTP URL:', httpUrl);
+      console.log('🔗 QR Scan - Attempting to open app');
+      console.log('   Deep Link:', deepLink);
+      console.log('   Intent Link:', intentLink);
+      console.log('   Return URL:', finalReturnUrl);
       
       if (messageEl) {
         messageEl.textContent = "Opening app...";
@@ -49,20 +53,14 @@ function ScanRedirectContent() {
       document.addEventListener('visibilitychange', handleVisibilityChange);
       window.addEventListener('pagehide', handlePageHide);
       
-      // Try HTTP URL first (works with AndroidManifest.xml intent filters)
-      // This will show app chooser dialog, then open app
-      window.location.href = httpUrl;
+      // Strategy 1: Try Intent URL first (most reliable on Android)
+      console.log('📱 Strategy 1: Trying Intent URL');
+      window.location.href = intentLink;
       
-      // Fallback 1: Try Intent URL
+      // Strategy 2: Try custom scheme deep link via iframe
       setTimeout(() => {
         if (!appOpened) {
-          window.location.href = intentLink;
-        }
-      }, 500);
-      
-      // Fallback 2: Try custom scheme
-      setTimeout(() => {
-        if (!appOpened) {
+          console.log('📱 Strategy 2: Trying deep link via iframe');
           const iframe = document.createElement("iframe");
           iframe.style.display = "none";
           iframe.src = deepLink;
@@ -72,7 +70,15 @@ function ScanRedirectContent() {
             document.body.removeChild(iframe);
           }, 1000);
         }
-      }, 1000);
+      }, 300);
+      
+      // Strategy 3: Try direct deep link redirect
+      setTimeout(() => {
+        if (!appOpened) {
+          console.log('📱 Strategy 3: Trying direct deep link redirect');
+          window.location.href = deepLink;
+        }
+      }, 600);
       
       // If app doesn't open within 2 seconds, download APK
       setTimeout(() => {
@@ -118,9 +124,10 @@ function ScanRedirectContent() {
       
     } else if (isIOS) {
       // iOS: Try to open app first
-      const deepLink = `expiryanalyzer://scan?returnUrl=${encodeURIComponent(returnUrl)}`;
+      const deepLink = `expiryanalyzer://scan?returnUrl=${encodeURIComponent(finalReturnUrl)}`;
       
       console.log('🔗 QR Scan - Attempting to open iOS app:', deepLink);
+      console.log('   Return URL:', finalReturnUrl);
       
       if (messageEl) {
         messageEl.textContent = "Opening app...";
@@ -170,7 +177,7 @@ function ScanRedirectContent() {
         messageEl.textContent = "Scan this QR code with your mobile device.";
       }
     }
-  }, [returnUrl]);
+  }, [searchParams]);
 
   const handleDownloadAPK = async () => {
     // Use config to get correct APK download URL (uses BASE_URL from .env)

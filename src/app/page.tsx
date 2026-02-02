@@ -73,19 +73,25 @@ export default function Home() {
 
     window.addEventListener('message', handleScanResult);
 
-    // Check URL params for scan result (when app redirects back)
+    // Check URL params for scan result (when app redirects back from Flutter app)
     const params = new URLSearchParams(window.location.search);
     const barcode = params.get('barcode');
     const product = params.get('product');
     const expiryDate = params.get('expiryDate');
 
-    if (barcode) {
-      addScannedProduct(barcode, product || '', expiryDate || '');
-      // Clean up URL
+    // If product data exists (from Flutter app scan), add it
+    if (product || barcode || expiryDate) {
+      addScannedProduct(
+        barcode || `scanned-${Date.now()}`, 
+        decodeURIComponent(product || 'Scanned Product'), 
+        expiryDate || ''
+      );
+      // Clean up URL after processing
       window.history.replaceState({}, '', window.location.pathname);
     }
 
     return () => window.removeEventListener('message', handleScanResult);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addScannedProduct = async (barcode: string, productName: string, expiryDate: string) => {

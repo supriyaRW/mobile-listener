@@ -38,7 +38,7 @@ export function getQRCodeUrl(path: string = '/download'): string {
  * Uses NEXT_PUBLIC_BASE_URL from .env file (e.g., http://192.168.1.210:3000)
  */
 export function getDownloadUrlForQR(): string {
-  // Changed to /scan route - this will try to open app first, then download APK if not installed
+  // Use /scan route - this will redirect to deep link to open app
   const scanRoute = '/scan';
   
   // Priority 1: Use BASE_URL from environment variable (set in .env file)
@@ -62,7 +62,7 @@ export function getDownloadUrlForQR(): string {
       console.warn(
         '⚠️ QR Code Warning: You are accessing via localhost. ' +
         'Set NEXT_PUBLIC_BASE_URL in .env file or access via network IP instead. ' +
-        'Example: http://192.168.1.210:3000'
+        'Example: http://192.168.1.209:3000'
       );
     }
     
