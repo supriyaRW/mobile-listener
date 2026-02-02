@@ -3,6 +3,10 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 
+// Force dynamic rendering - prevent ISR/static generation for large APK file
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     // Get APK file name from environment variable or use default
