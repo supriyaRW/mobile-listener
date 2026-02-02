@@ -27,15 +27,11 @@ export async function GET() {
     // Read the APK file
     const apkBuffer = await readFile(apkPath);
     
-    // Convert Buffer to a proper ArrayBuffer by creating a new one
-    // This avoids SharedArrayBuffer type issues
-    const arrayBuffer = apkBuffer.buffer.slice(
-      apkBuffer.byteOffset,
-      apkBuffer.byteOffset + apkBuffer.byteLength
-    ) as ArrayBuffer;
+    // Convert Buffer to Uint8Array for proper type compatibility
+    const uint8Array = new Uint8Array(apkBuffer);
     
-    // Create Blob from ArrayBuffer
-    const blob = new Blob([arrayBuffer], { type: "application/vnd.android.package-archive" });
+    // Create Blob from Uint8Array (Blob accepts Uint8Array directly)
+    const blob = new Blob([uint8Array], { type: "application/vnd.android.package-archive" });
     
     // Create Response with proper headers for mobile download
     return new Response(blob, {
