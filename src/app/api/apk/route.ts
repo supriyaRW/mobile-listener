@@ -24,21 +24,16 @@ export async function GET() {
       );
     }
 
-    // Read the APK file
+    // Read the APK file (Node Buffer; must not pass directly to NextResponse)
     const apkBuffer = await readFile(apkPath);
-    
-    // Convert Buffer to Uint8Array for proper type compatibility
-    const uint8Array = new Uint8Array(apkBuffer);
-    
-    // Create Blob from Uint8Array (Blob accepts Uint8Array directly)
-    const blob = new Blob([uint8Array], { type: "application/vnd.android.package-archive" });
-    
-    // Create Response with proper headers for mobile download
-    return new Response(blob, {
+    // Uint8Array is valid BodyInit; fixes Vercel/strict TypeScript (Buffer is not)
+    const body = new Uint8Array(apkBuffer);
+
+    return new NextResponse(body, {
       headers: {
         "Content-Type": "application/vnd.android.package-archive",
         "Content-Disposition": `attachment; filename="${apkFileName}"`,
-        "Content-Length": apkBuffer.length.toString(),
+        "Content-Length": String(body.length),
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
         "Expires": "0",
