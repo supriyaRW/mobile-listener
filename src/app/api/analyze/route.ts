@@ -13,12 +13,12 @@ function coerceIsoDate(text: string): string {
   if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return normalized;
   const m1 = normalized.match(/(\d{2})[\/\-.](\d{2})[\/\-.](\d{4})/);
   if (m1) {
-    const [_, d, m, y] = m1;
+    const [, d, m, y] = m1;
     return `${y}-${m}-${d}`;
   }
   const m2 = normalized.match(/(\d{4})[\/\-.](\d{2})[\/\-.](\d{2})/);
   if (m2) {
-    const [_, y, m, d] = m2;
+    const [, y, m, d] = m2;
     return `${y}-${m}-${d}`;
   }
   return normalized;
@@ -69,18 +69,18 @@ Rules for expiryDate:
       contents: [
         { role: "user", parts: [
           { text: prompt },
-          { inlineData: { data: base64, mimeType: (file as any).type || "image/png" } },
+          { inlineData: { data: base64, mimeType: file.type || "image/png" } },
         ]},
       ],
     });
 
     const text = result.response.text();
-    let extracted: AnalyzeResponse = { product: "", expiryDate: "" };
+    const extracted: AnalyzeResponse = { product: "", expiryDate: "" };
     try {
       const jsonStart = text.indexOf("{");
       const jsonEnd = text.lastIndexOf("}");
       const raw = jsonStart >= 0 && jsonEnd >= 0 ? text.slice(jsonStart, jsonEnd + 1) : text;
-      const parsed = JSON.parse(raw);
+      const parsed = JSON.parse(raw) as { product?: unknown; expiryDate?: unknown };
       extracted.product = String(parsed.product || "").slice(0, 120);
       if (parsed.expiryDate) extracted.expiryDate = coerceIsoDate(String(parsed.expiryDate));
     } catch {
@@ -100,9 +100,10 @@ Rules for expiryDate:
     if (!extracted.product) extracted.product = "";
     if (!extracted.expiryDate) extracted.expiryDate = "";
     return Response.json(extracted satisfies AnalyzeResponse);
-  } catch (err: any) {
-    console.error("/api/analyze error", err?.message || err);
-    return Response.json({ error: "analysis_failed", message: String(err?.message || err) }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("/api/analyze error", errorMessage);
+    return Response.json({ error: "analysis_failed", message: errorMessage }, { status: 500 });
   }
 }
 

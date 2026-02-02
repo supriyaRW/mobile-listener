@@ -6,7 +6,6 @@ import { config } from "@/lib/config";
 export default function DirectDownloadPage() {
   const [status, setStatus] = useState("Starting download...");
   const [downloaded, setDownloaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Detect if Android device
@@ -81,7 +80,7 @@ export default function DirectDownloadPage() {
           <h3 className="font-semibold text-blue-800 mb-3">Installation Steps:</h3>
           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
             <li>Check your <strong>Downloads</strong> folder for <strong>app-release.apk</strong></li>
-            <li>Enable <strong>"Install from Unknown Sources"</strong> in Android Settings → Security</li>
+            <li>Enable <strong>&quot;Install from Unknown Sources&quot;</strong> in Android Settings → Security</li>
             <li>Tap the downloaded APK file to install</li>
             <li>Open the app after installation completes</li>
           </ol>
@@ -102,11 +101,6 @@ export default function DirectDownloadPage() {
           </a>
         </div>
 
-        {error && (
-          <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-left">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        )}
       </div>
     </div>
   );

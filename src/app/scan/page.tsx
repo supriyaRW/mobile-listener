@@ -239,8 +239,8 @@ function ScanRedirectContent() {
           </button>
 
           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700 mb-4">
-            <li>Check your device's Downloads folder for <strong>app-release.apk</strong></li>
-            <li>Enable "Install from Unknown Sources" in Android Settings → Security</li>
+            <li>Check your device&apos;s Downloads folder for <strong>app-release.apk</strong></li>
+            <li>Enable &quot;Install from Unknown Sources&quot; in Android Settings → Security</li>
             <li>Tap on the downloaded APK file to install</li>
             <li>After installation, scan the QR code again to open the app</li>
           </ol>

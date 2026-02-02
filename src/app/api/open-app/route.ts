@@ -49,10 +49,11 @@ export async function POST(req: NextRequest) {
       sessionId: sessionId,
       message: 'Open app command sent. Make sure your mobile device has the page open.'
     });
-  } catch (error: any) {
-    console.error('Error in POST /api/open-app:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error in POST /api/open-app:', errorMessage);
     return NextResponse.json(
-      { error: 'Failed to trigger open app', message: error.message },
+      { error: 'Failed to trigger open app', message: errorMessage },
       { status: 500 }
     );
   }
@@ -90,10 +91,11 @@ export async function GET(req: NextRequest) {
       command: null,
       sessionId: sessionId
     });
-  } catch (error: any) {
-    console.error('Error in GET /api/open-app:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error in GET /api/open-app:', errorMessage);
     return NextResponse.json(
-      { error: 'Failed to check open app command', message: error.message },
+      { error: 'Failed to check open app command', message: errorMessage },
       { status: 500 }
     );
   }

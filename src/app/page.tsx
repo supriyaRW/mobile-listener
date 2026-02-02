@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
-import { config } from "@/lib/config";
 import { getDownloadUrlForQR } from "@/lib/qr-code-url";
 
 type UploadedImage = {
@@ -468,7 +466,7 @@ export default function Home() {
                 <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left">
                   <p className="text-sm text-yellow-800 font-semibold mb-1">⚠️ Localhost Detected</p>
                   <p className="text-xs text-yellow-700">
-                    QR code contains localhost URL and won't work on mobile devices.
+                    QR code contains localhost URL and won&apos;t work on mobile devices.
                     <br />
                     <strong>Solution:</strong> Access this page via your network IP instead:
                     <br />

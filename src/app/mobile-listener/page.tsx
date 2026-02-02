@@ -79,9 +79,10 @@ export default function MobileListenerPage() {
           setStatus("App opened! If it didn't open, make sure the app is installed.");
         }, 2000);
       }
-    } catch (error: any) {
-      console.error('Error checking for command:', error);
-      setStatus(`Error: ${error.message || 'Cannot connect to server'}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Cannot connect to server';
+      console.error('Error checking for command:', errorMessage);
+      setStatus(`Error: ${errorMessage}`);
       setConnected(false);
     }
   };
@@ -117,7 +118,7 @@ export default function MobileListenerPage() {
           <h3 className="font-semibold text-blue-800 mb-2">How to use:</h3>
           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
             <li>Keep this page open on your mobile device</li>
-            <li>On your desktop, click "Open App" button</li>
+            <li>On your desktop, click &quot;Open App&quot; button</li>
             <li>The app will open automatically on your phone!</li>
           </ol>
         </div>

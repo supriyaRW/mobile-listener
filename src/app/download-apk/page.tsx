@@ -57,7 +57,7 @@ export default function DownloadAPKPage() {
           <h3 className="font-semibold text-blue-800 mb-2">Installation Steps:</h3>
           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
             <li>Check your Downloads folder for <strong>app-release.apk</strong></li>
-            <li>Enable "Install from Unknown Sources" in Android Settings</li>
+            <li>Enable &quot;Install from Unknown Sources&quot; in Android Settings</li>
             <li>Tap the APK file to install</li>
             <li>Open the app after installation</li>
           </ol>

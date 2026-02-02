@@ -3,7 +3,7 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Get APK file name from environment variable or use default
     const apkFileName = process.env.NEXT_PUBLIC_APK_FILE_NAME || "app-release.apk";
@@ -40,10 +40,11 @@ export async function GET(req: NextRequest) {
         "Accept-Ranges": "bytes",
       },
     });
-  } catch (error: any) {
-    console.error("Error serving APK:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error serving APK:", errorMessage);
     return NextResponse.json(
-      { error: "Failed to serve APK", message: error.message },
+      { error: "Failed to serve APK", message: errorMessage },
       { status: 500 }
     );
   }
